@@ -666,7 +666,7 @@
     var cv = document.getElementById("sky");
     var ctx = cv.getContext("2d");
     var PX = 5;            // 픽셀 한 칸 크기(px)
-    var MAX = 3;           // 동시에 떨어지는 최대 개수
+    var MAX = 9;           // 동시에 떨어지는 최대 개수
     var W, H, stars = [], nextAt = 0, last = 0;
 
     function resize() {
@@ -678,17 +678,30 @@
     addEventListener("resize", resize);
     resize();
 
-    function spawn() {
+    function spawn(x, y, delay) {
       var dur = 900 + Math.random() * 700;               // 떨어지는 시간(ms)
       stars.push({
-        x: Math.random() * W * 0.9 + W * 0.05,
-        y: Math.random() * H * 0.45 - H * 0.05,
-        dir: Math.random() < 0.75 ? 1 : -1,              // 대부분 오른쪽 아래, 가끔 왼쪽 아래
+        x: x,
+        y: y,
+        dir: 1,                                          // 항상 오른쪽 아래로
         dist: (60 + Math.random() * 60) * (PX === 4 ? 0.8 : 1),
         tail: 16 + Math.floor(Math.random() * 10),
         dur: dur,
-        t: 0
+        t: -(delay || 0)                                 // 음수 = 잠깐 기다렸다 출발
       });
+    }
+
+    // 화면 아무 데서나 하나, 가끔은 근처에서 2~3개가 겹치듯 연달아
+    function launch() {
+      var x = Math.random() * W * 1.05 - W * 0.2;
+      var y = Math.random() * H * 0.85 - H * 0.1;
+      spawn(x, y, 0);
+      if (Math.random() < 0.35) {
+        var extra = 1 + (Math.random() < 0.4 ? 1 : 0);
+        for (var i = 1; i <= extra; i++) {
+          spawn(x + (Math.random() * 50 - 15), y + (Math.random() * 30 - 20), i * (90 + Math.random() * 220));
+        }
+      }
     }
 
     function dot(x, y, a) {
@@ -700,8 +713,8 @@
       var dt = Math.min(50, now - (last || now));
       last = now;
       if (now >= nextAt) {
-        if (stars.length < MAX) spawn();
-        nextAt = now + 700 + Math.random() * 2200;
+        if (stars.length < MAX) launch();
+        nextAt = now + 250 + Math.random() * 850;
       }
       ctx.clearRect(0, 0, W, H);
       ctx.fillStyle = "#fff";
@@ -709,6 +722,7 @@
       for (var i = stars.length - 1; i >= 0; i--) {
         var s = stars[i];
         s.t += dt;
+        if (s.t < 0) continue;
         var p = s.t / s.dur;
         if (p >= 1) { stars.splice(i, 1); continue; }
         var ease = p < .5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;   // ease-in-out
