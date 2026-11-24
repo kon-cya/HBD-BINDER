@@ -29,7 +29,7 @@
     --ink: #f2efe6;
     --blue: #079fe6;
     --track: rgba(242, 239, 230, .18);
-    --px: 24px;            /* 폰트 1칸 = 12px의 배수일 때 가장 선명함 */
+    --px: 18px;            /* 말풍선·로딩·편지의 Mona 폰트 크기 */
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -142,7 +142,7 @@
   .bubble {
     position: relative;
     max-width: 100%;
-    padding: 12px 30px 14px;
+    padding: 10px 24px 12px;
     background: var(--blue);
     color: #fff;
     text-align: right;
@@ -164,10 +164,10 @@
   .bubble::after {
     content: "";
     position: absolute;
-    right: 14px;
-    bottom: -24px;
-    width: 40px;
-    height: 30px;
+    right: 12px;
+    bottom: -19px;
+    width: 32px;
+    height: 24px;
     background: var(--blue);
     clip-path: polygon(0 0, 100% 0, 100% 100%);
   }
@@ -307,7 +307,7 @@
     color: #1d1d1f;
     font-family: "KoPubWorld Batang", "Nanum Myeongjo", "AppleMyungjo", serif;
     font-weight: 300;
-    font-size: 17px;
+    font-size: 15px;
     line-height: 1.9;
     letter-spacing: -0.03em;
     word-break: keep-all;
@@ -387,13 +387,13 @@
   @media (max-width: 520px) {
     .np-layer { padding: 8px; }
     .np { height: calc(100vh - 16px); height: calc(100dvh - 16px); }
-    .np-text { padding: 22px 20px 40px; font-size: 16px; line-height: 1.85; }
+    .np-text { padding: 22px 20px 40px; font-size: 14.5px; line-height: 1.85; }
     /* 좁은 화면에서는 단어 단위로만 끊으면 양쪽정렬 빈칸이 너무 벌어져서, 책처럼 글자 단위로 끊음 */
     .np-text p { word-break: normal; }
   }
 
   @media (max-width: 420px) {
-    :root { --px: 18px; }
+    :root { --px: 15px; }
     .bubble { padding: 10px 22px 12px; border-radius: 28px / 18px; }
     .bubble::after { right: 10px; bottom: -18px; width: 30px; height: 22px; }
   }
@@ -406,7 +406,7 @@
   }
   .tag {
     display: block;
-    width: 384px;
+    width: 330px;
     max-width: 100%;
     padding: 6px 0;
     border: 0;
@@ -1008,11 +1008,6 @@
     f.dot(G.edge, 0, P, 1, 43 - P);
     f.dot(G.edge, 79, P, 1, 43 - P);
     f.dot(G.edge, 1, 43, 78, 1);
-    for (var i = 0; i < 42 - P - 1; i++) {
-      if (i % 3 === 2) continue;           // 점선
-      f.dot(G.line, 2 + i, 41 - i);
-      f.dot(G.line, 77 - i, 41 - i);
-    }
     document.getElementById("ltFront").innerHTML = f.svg();
 
     /* ---------- 편지 내용 ---------- */
