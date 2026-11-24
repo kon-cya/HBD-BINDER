@@ -386,6 +386,28 @@
     .bubble::after { right: 10px; bottom: -18px; width: 30px; height: 22px; }
   }
 
+  /* ---------- 소리 켜기/끄기 ---------- */
+  .sound {
+    position: fixed;
+    top: 14px;
+    right: 14px;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 0;
+    background: rgba(0, 0, 0, .35);
+    color: var(--ink);
+    cursor: pointer;
+    opacity: .75;
+  }
+  .sound:hover, .sound:focus-visible { opacity: 1; }
+  .sound:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+  .sound .off { display: none; }
+  .sound[aria-pressed="false"] .on { display: none; }
+  .sound[aria-pressed="false"] .off { display: block; }
+
   @media (prefers-reduced-motion: reduce) {
     .spinner { animation-duration: 2s; }
     .bubble, .bubble.show, .bubble.show:hover { transform: none; transition: opacity .2s; }
@@ -396,6 +418,7 @@
 <body>
 
   <div class="bg" aria-hidden="true"></div>
+  <audio id="bgm" src="audio/happy-birthday-8bit.mp3" loop preload="auto"></audio>
 
   <div class="screen" aria-live="polite">
     <div class="loader" id="loader" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="로딩 중">
@@ -454,6 +477,17 @@
       </div>
     </section>
   </div>
+
+  <button type="button" class="sound" id="sound" aria-pressed="true" aria-label="배경 음악">
+    <svg class="on" width="20" height="16" viewBox="0 0 20 16" shape-rendering="crispEdges" fill="currentColor" aria-hidden="true">
+      <path d="M0 5h4v6H0zM4 4h2v8H4zM6 2h2v12H6zM8 0h2v16H8z"/>
+      <path d="M12 6h2v4h-2zM14 3h2v2h-2zM14 11h2v2h-2zM16 5h2v6h-2z"/>
+    </svg>
+    <svg class="off" width="20" height="16" viewBox="0 0 20 16" shape-rendering="crispEdges" fill="currentColor" aria-hidden="true">
+      <path d="M0 5h4v6H0zM4 4h2v8H4zM6 2h2v12H6zM8 0h2v16H8z"/>
+      <path d="M12 5h2v2h-2zM14 7h2v2h-2zM16 9h2v2h-2zM16 5h2v2h-2zM12 9h2v2h-2z"/>
+    </svg>
+  </button>
 
 <script>
   (function () {
@@ -529,6 +563,63 @@
       else closeNote();
     });
     layer.addEventListener("click", function (e) { if (e.target === layer) closeNote(); });
+
+    /* ---------- 배경 음악 ---------- */
+    var VOLUME = 0.2;   // 0 ~ 1
+    var bgm = document.getElementById("bgm");
+    var soundBtn = document.getElementById("sound");
+    var muted = false;
+    try { muted = localStorage.getItem("hbd-muted") === "1"; } catch (e) {}
+    bgm.volume = VOLUME;
+
+    function showSound() { soundBtn.setAttribute("aria-pressed", muted ? "false" : "true"); }
+    // 아이폰·아이패드는 audio.volume을 무시하므로 Web Audio로 음량을 줄임
+    var gainCtx = null;
+    var volumeLocked = (function () {
+      bgm.volume = 0.5;
+      var locked = bgm.volume !== 0.5;
+      bgm.volume = VOLUME;
+      return locked;
+    })();
+    function useGainIfNeeded() {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!volumeLocked || !AC) return;
+      if (!gainCtx) {
+        gainCtx = new AC();
+        var g = gainCtx.createGain();
+        g.gain.value = VOLUME;
+        gainCtx.createMediaElementSource(bgm).connect(g);
+        g.connect(gainCtx.destination);
+      }
+      if (gainCtx.state === "suspended") gainCtx.resume();
+    }
+
+    function playBgm() {
+      if (muted || !bgm.paused) return;
+      useGainIfNeeded();
+      var p = bgm.play();
+      if (p && p.then) p.then(removeUnlock, function () { /* 자동재생 차단: 첫 터치/클릭을 기다림 */ });
+    }
+    function unlock(e) {
+      if (e.target.closest && e.target.closest("#sound")) return;
+      playBgm();
+    }
+    function removeUnlock() {
+      ["pointerdown", "keydown", "touchstart"].forEach(function (t) {
+        document.removeEventListener(t, unlock, true);
+      });
+    }
+    ["pointerdown", "keydown", "touchstart"].forEach(function (t) {
+      document.addEventListener(t, unlock, true);
+    });
+    soundBtn.addEventListener("click", function () {
+      muted = !muted;
+      try { localStorage.setItem("hbd-muted", muted ? "1" : "0"); } catch (e) {}
+      showSound();
+      if (muted) bgm.pause(); else playBgm();
+    });
+    showSound();
+    playBgm();
     document.addEventListener("keydown", function (e) {
       if (e.key === "Escape" && layer.classList.contains("open")) closeNote();
     });

@@ -10,3 +10,6 @@
 본문은 `story.txt`에 있어요.
 - 줄바꿈 한 번 = 새 문단 (자동 들여쓰기)
 - 빈 줄 = 장면 전환 (문단 사이 간격이 넓어짐)
+
+## 배경 음악
+`audio/happy-birthday-8bit.mp3` — 음량은 index.html의 `VOLUME` 값(0~1)으로 조절.
