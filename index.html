@@ -307,7 +307,7 @@
   .np-text:focus { outline: none; }
   /* 창을 키워도 한 줄이 너무 길어지지 않게 */
   .np.max .np-text { padding-inline: max(32px, calc((100% - 38em) / 2)); }
-  .np-text p { text-indent: 1em; }
+  .np-text p { text-indent: 1em; text-align: justify; }
   .np-text p + p { margin-top: .35em; }
   .np-text p.gap { margin-top: 1.9em; }   /* 원고의 빈 줄 = 장면 전환 */
   .np-text .msg { text-indent: 0; color: #868a8e; }
@@ -376,6 +376,8 @@
     .np-layer { padding: 8px; }
     .np { height: calc(100vh - 16px); height: calc(100dvh - 16px); }
     .np-text { padding: 22px 20px 40px; font-size: 16px; line-height: 1.85; }
+    /* 좁은 화면에서는 단어 단위로만 끊으면 양쪽정렬 빈칸이 너무 벌어져서, 책처럼 글자 단위로 끊음 */
+    .np-text p { word-break: normal; }
   }
 
   @media (max-width: 420px) {
