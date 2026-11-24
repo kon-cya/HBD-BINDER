@@ -49,7 +49,7 @@
     flex-direction: column;
     align-items: center;
     gap: 18px;
-    transition: opacity .25s steps(3);
+    transition: opacity .15s linear;
   }
   .loader.done { opacity: 0; }
 
@@ -107,7 +107,7 @@
     text-align: right;
     border-radius: 34px / 22px;
     opacity: 0;
-    transform: scale(.6);
+    transform: translateY(28px);
     pointer-events: none;
   }
   .bubble p { white-space: nowrap; }
@@ -126,8 +126,8 @@
 
   .bubble.show {
     opacity: 1;
-    transform: scale(1);
-    transition: transform .28s steps(4), opacity .1s steps(1);
+    transform: translateY(0);
+    transition: transform .22s cubic-bezier(.2, .9, .3, 1), opacity .12s linear;
   }
 
   @media (max-width: 420px) {
@@ -183,7 +183,7 @@
         loader.parentNode.style.display = "none";
         bubble.removeAttribute("aria-hidden");
         bubble.classList.add("show");
-      }, 450);
+      }, 200);
     }
 
     function start() {
@@ -192,7 +192,7 @@
         // 불규칙하게 차오르다가 끝에서 잠깐 멈칫
         v = Math.min(100, v + 1 + Math.floor(Math.random() * 7));
         render(v);
-        if (v >= 100) { setTimeout(finish, 350); return; }
+        if (v >= 100) { setTimeout(finish, 200); return; }
         var wait = v > 85 ? 140 : 40 + Math.random() * 90;
         setTimeout(tick, wait);
       })();
