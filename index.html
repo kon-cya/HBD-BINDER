@@ -420,10 +420,11 @@
     border: 0;
     background: none;
     cursor: pointer;
+    transform: rotate(-5deg);            /* 살짝 삐뚤게 */
     transition: transform .15s steps(2);
   }
   .tag svg { display: block; width: 100%; height: auto; overflow: visible; }
-  .tag:hover, .tag:focus-visible { transform: translateY(-3px); }
+  .tag:hover, .tag:focus-visible { transform: rotate(-5deg) translateY(-3px); }
   .tag:focus-visible { outline: 2px dotted var(--amethyst); outline-offset: 4px; }
   .tag text { font-family: "Mona10x12", monospace; }
 
