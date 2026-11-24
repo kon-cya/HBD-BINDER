@@ -74,6 +74,16 @@
     padding: 16px;
   }
 
+  /* ---------- 픽셀 별똥별 ---------- */
+  .sky {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;
+    pointer-events: none;
+  }
+
   /* ---------- 로딩 ---------- */
   .loader {
     display: flex;
@@ -418,6 +428,7 @@
 <body>
 
   <div class="bg" aria-hidden="true"></div>
+  <canvas class="sky" id="sky" aria-hidden="true"></canvas>
   <audio id="bgm" src="audio/happy-birthday-8bit.mp3" loop preload="auto"></audio>
 
   <div class="screen" aria-live="polite">
@@ -645,6 +656,84 @@
     } else {
       go();
     }
+  })();
+</script>
+<script>
+  /* ---------- 픽셀 별똥별 ----------
+     화면을 PX배로 축소한 캔버스에 1칸짜리 점으로 그린 뒤 확대해서 픽셀 느낌을 냄 */
+  (function () {
+    if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var cv = document.getElementById("sky");
+    var ctx = cv.getContext("2d");
+    var PX = 5;            // 픽셀 한 칸 크기(px)
+    var MAX = 3;           // 동시에 떨어지는 최대 개수
+    var W, H, stars = [], nextAt = 0, last = 0;
+
+    function resize() {
+      PX = innerWidth < 520 ? 4 : 5;
+      W = Math.ceil(innerWidth / PX);
+      H = Math.ceil(innerHeight / PX);
+      cv.width = W; cv.height = H;
+    }
+    addEventListener("resize", resize);
+    resize();
+
+    function spawn() {
+      var dur = 900 + Math.random() * 700;               // 떨어지는 시간(ms)
+      stars.push({
+        x: Math.random() * W * 0.9 + W * 0.05,
+        y: Math.random() * H * 0.45 - H * 0.05,
+        dir: Math.random() < 0.75 ? 1 : -1,              // 대부분 오른쪽 아래, 가끔 왼쪽 아래
+        dist: (60 + Math.random() * 60) * (PX === 4 ? 0.8 : 1),
+        tail: 16 + Math.floor(Math.random() * 10),
+        dur: dur,
+        t: 0
+      });
+    }
+
+    function dot(x, y, a) {
+      ctx.globalAlpha = a;
+      ctx.fillRect(x, y, 1, 1);
+    }
+
+    function frame(now) {
+      var dt = Math.min(50, now - (last || now));
+      last = now;
+      if (now >= nextAt) {
+        if (stars.length < MAX) spawn();
+        nextAt = now + 700 + Math.random() * 2200;
+      }
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = "#fff";
+
+      for (var i = stars.length - 1; i >= 0; i--) {
+        var s = stars[i];
+        s.t += dt;
+        var p = s.t / s.dur;
+        if (p >= 1) { stars.splice(i, 1); continue; }
+        var ease = p < .5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;   // ease-in-out
+        var d = Math.round(ease * s.dist);
+        var hx = Math.round(s.x) + d * s.dir;
+        var hy = Math.round(s.y) + d;
+        // 꼬리: 30%까지 길어졌다가 다시 짧아짐
+        var len = Math.round(s.tail * (p < .3 ? p / .3 : 1 - (p - .3) / .7));
+        len = Math.min(len, d);
+        for (var k = 1; k <= len; k++) {
+          dot(hx - k * s.dir, hy - k, Math.pow(1 - k / (len + 1), 1.4) * .9);
+        }
+        // 머리 + 반짝임(십자)
+        var glow = Math.sin(p * Math.PI);
+        dot(hx, hy, 1);
+        if (glow > .35) {
+          var g = (glow - .35) * .9;
+          dot(hx + 1, hy, g); dot(hx - 1, hy, g); dot(hx, hy + 1, g); dot(hx, hy - 1, g);
+          if (glow > .8) { dot(hx + 2, hy, g * .4); dot(hx - 2, hy, g * .4); dot(hx, hy + 2, g * .4); dot(hx, hy - 2, g * .4); }
+        }
+      }
+      ctx.globalAlpha = 1;
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
   })();
 </script>
 </body>
