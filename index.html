@@ -13,10 +13,10 @@
   }
 
   :root {
-    --bg: #ffffff;
-    --ink: #111111;
+    --bg: #0b0a0c;
+    --ink: #f2efe6;
     --blue: #079fe6;
-    --track: #e6e6e6;
+    --track: rgba(242, 239, 230, .18);
     --px: 24px;            /* 폰트 1칸 = 12px의 배수일 때 가장 선명함 */
   }
 
@@ -25,7 +25,10 @@
   html, body { height: 100%; }
 
   body {
-    background: var(--bg);
+    background:
+      linear-gradient(rgba(0,0,0,.22), rgba(0,0,0,.22)),
+      var(--bg) url("images/bg-small.png") center / cover no-repeat;
+    image-rendering: pixelated;
     color: var(--ink);
     font-family: "Mona10x12", monospace;
     font-size: var(--px);
