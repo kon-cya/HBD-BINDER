@@ -11,6 +11,9 @@
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="preload" href="fonts/Mona10x12.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="fonts/KoPubWorldBatang-Light.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300&display=swap">
 <style>
   @font-face {
     font-family: "Mona10x12";
@@ -313,7 +316,7 @@
     padding: 30px 32px 48px;
     background: transparent;
     color: var(--amethyst);
-    font-family: "KoPubWorld Batang", "Nanum Myeongjo", "AppleMyungjo", serif;
+    font-family: "KoPubWorld Batang", "Noto Serif TC", "Nanum Myeongjo", "AppleMyungjo", serif;   /* 한자는 Noto Serif TC */
     font-weight: 300;
     font-size: 15px;
     line-height: 1.9;
@@ -329,7 +332,27 @@
   .np.max .np-text { padding-inline: max(32px, calc((100% - 38em) / 2)); }
   .np-text p { text-indent: 1em; text-align: justify; }
   .np-text p + p { margin-top: .35em; }
-  .np-text p.gap { margin-top: 1.9em; }   /* 원고의 빈 줄 = 장면 전환 */
+  .np-text p.gap { margin-top: 1.4em; }   /* 원고의 빈 줄 한 개 = 문단 덩어리 사이 */
+  .np-text .story-title {
+    margin: .6em 0 2.4em;
+    text-align: center;
+    font-size: 1.45em;
+    font-weight: 300;
+    letter-spacing: .02em;
+    text-indent: 0;
+  }
+  /* 원고의 빈 줄 여러 개 = 장면 전환 → 픽셀 점 세 개 */
+  .np-text .sep {
+    display: flex;
+    justify-content: center;
+    gap: 14px;
+    margin: 3em 0;
+  }
+  .np-text .sep i {
+    width: 5px;
+    height: 5px;
+    background: var(--tomato);
+  }
   .np-text .msg { text-indent: 0; color: #0E5047; }
 
   /* 윈도우 95 스크롤바 (크롬·사파리·엣지) */
@@ -704,15 +727,32 @@
       .then(function (r) { if (!r.ok) throw r; return r.text(); })
       .then(function (raw) {
         var frag = document.createDocumentFragment();
-        var gap = false;
+        // 규칙: "# 제목" = 제목 / 빈 줄 1개 = 간격 / 빈 줄 2개 이상 = 장면 전환 표시
+        var blanks = 0, afterTitle = false;
         raw.replace(/\r/g, "").split("\n").forEach(function (line) {
           line = line.trim();
-          if (!line) { gap = frag.childNodes.length > 0; return; }
+          if (!line) { blanks++; return; }
+          if (line.indexOf("# ") === 0) {
+            var h = document.createElement("h1");
+            h.className = "story-title";
+            h.textContent = line.slice(2).trim();
+            frag.appendChild(h);
+            blanks = 0; afterTitle = true;
+            return;
+          }
+          var started = frag.childNodes.length > 0 && !afterTitle;
+          if (started && blanks >= 2) {
+            var sep = document.createElement("div");
+            sep.className = "sep";
+            sep.setAttribute("aria-hidden", "true");
+            sep.innerHTML = "<i></i><i></i><i></i>";
+            frag.appendChild(sep);
+          }
           var p = document.createElement("p");
           p.textContent = line;
-          if (gap) p.className = "gap";
-          gap = false;
+          if (started && blanks === 1) p.className = "gap";
           frag.appendChild(p);
+          blanks = 0; afterTitle = false;
         });
         story.textContent = "";
         story.appendChild(frag);
