@@ -25,17 +25,17 @@
   }
 
   :root {
-    /* 팔레트: Brick Ember / Ink Black / Air Force Blue / Baby Blue / Pale Sky */
-    --brick: #BA1200;
-    --navy: #031927;
-    --air: #508AA8;
-    --baby: #9DD1F1;
-    --pale: #C8E0F4;
+    /* 팔레트: Golden Sand / Tomato Jam / Pine Teal / Dark Amethyst / Onyx */
+    --sand: #E3D473;
+    --tomato: #D72E2E;
+    --teal: #0E5047;
+    --amethyst: #22153C;
+    --onyx: #000F08;
 
-    --bg: #031927;
-    --ink: #C8E0F4;        /* 어두운 배경 위 글자 */
-    --blue: #9DD1F1;       /* 말풍선, 로딩 막대 */
-    --track: rgba(80, 138, 168, .45);
+    --bg: #000F08;
+    --ink: #E3D473;        /* 어두운 배경 위 글자 */
+    --blue: #E3D473;       /* 말풍선, 로딩 막대 */
+    --track: rgba(14, 80, 71, .7);
     --px: 18px;            /* 말풍선·로딩·편지의 Mona 폰트 크기 */
   }
 
@@ -151,7 +151,7 @@
     max-width: 100%;
     padding: 10px 24px 12px;
     background: var(--blue);
-    color: var(--navy);
+    color: var(--amethyst);
     text-align: right;
     border-radius: 34px / 22px;
     opacity: 0;
@@ -165,7 +165,7 @@
   .bubble p { white-space: nowrap; }
   .bubble.show { pointer-events: auto; }
   .bubble.show:hover { transform: translateY(-3px); }
-  .bubble:focus-visible { outline: 3px solid #C8E0F4; outline-offset: 4px; }
+  .bubble:focus-visible { outline: 3px solid #E3D473; outline-offset: 4px; }
 
   /* 오른쪽 아래 꼬리 */
   .bubble::after {
@@ -192,7 +192,7 @@
     display: grid;
     place-items: center;
     padding: 16px;
-    background: rgba(3, 25, 39, .35);
+    background: rgba(34, 21, 60, .4);
     opacity: 0;
     visibility: hidden;
     transition: opacity .15s linear, visibility 0s linear .15s;
@@ -204,10 +204,10 @@
   }
 
   .np {
-    --face: #9DD1F1;
-    --hi: #C8E0F4;
-    --lo: #508AA8;
-    --dk: #031927;
+    --face: #0E5047;
+    --hi: #E3D473;
+    --lo: #22153C;
+    --dk: #000F08;
     display: flex;
     flex-direction: column;
     width: min(680px, 100%);
@@ -215,13 +215,13 @@
     height: min(88dvh, 900px);
     padding: 3px;
     background: var(--face);
-    color: #031927;
+    color: #E3D473;
     font-size: 12px;
     line-height: 12px;
     box-shadow:
-      inset -1px -1px var(--dk), inset 1px 1px #C8E0F4,
+      inset -1px -1px var(--dk), inset 1px 1px #E3D473,
       inset -2px -2px var(--lo), inset 2px 2px var(--hi),
-      0 14px 40px rgba(3, 25, 39, .6);
+      0 14px 40px rgba(0, 15, 8, .6);
     transform: translateY(28px);
     transition: transform .22s cubic-bezier(.2, .9, .3, 1);
   }
@@ -241,8 +241,8 @@
     gap: 6px;
     height: 24px;
     padding: 0 3px 0 4px;
-    background: var(--brick);
-    color: #C8E0F4;
+    background: var(--tomato);
+    color: #E3D473;
     user-select: none;
   }
   .np-title svg { flex: none; }
@@ -266,18 +266,18 @@
     background: var(--face);
     box-shadow:
       inset -1px -1px var(--dk), inset 1px 1px var(--hi),
-      inset -2px -2px var(--lo), inset 2px 2px #C8E0F4;
+      inset -2px -2px var(--lo), inset 2px 2px #E3D473;
     cursor: pointer;
   }
   .np-btn + .np-btn.close { margin-left: 2px; }
   .np-btn:active {
     box-shadow:
       inset 1px 1px var(--dk), inset -1px -1px var(--hi),
-      inset 2px 2px var(--lo), inset -2px -2px #C8E0F4;
+      inset 2px 2px var(--lo), inset -2px -2px #E3D473;
   }
   .np-btn:active svg { transform: translate(1px, 1px); }
-  .np-btn svg, .np-hbar svg { fill: var(--navy); }
-  .np-btn:focus-visible { outline: 1px dotted #C8E0F4; outline-offset: -4px; }
+  .np-btn svg, .np-hbar svg { fill: var(--sand); }
+  .np-btn:focus-visible { outline: 1px dotted #E3D473; outline-offset: -4px; }
 
   /* 메뉴 */
   .np-menu {
@@ -296,12 +296,12 @@
     display: grid;
     grid-template-rows: 1fr 16px;
     grid-template-columns: 1fr 16px;
-    background: rgba(200, 224, 244, .7);   /* 반투명 Pale Sky 종이 */
+    background: rgba(227, 212, 115, .82);   /* 반투명 Golden Sand 종이 */
     -webkit-backdrop-filter: blur(3px);
             backdrop-filter: blur(3px);
     box-shadow:
       inset 1px 1px var(--lo), inset -1px -1px var(--hi),
-      inset 2px 2px var(--dk), inset -2px -2px #C8E0F4;
+      inset 2px 2px var(--dk), inset -2px -2px #E3D473;
     padding: 2px;
   }
 
@@ -312,7 +312,7 @@
     overflow-x: hidden;
     padding: 30px 32px 48px;
     background: transparent;
-    color: var(--navy);
+    color: var(--amethyst);
     font-family: "KoPubWorld Batang", "Nanum Myeongjo", "AppleMyungjo", serif;
     font-weight: 300;
     font-size: 15px;
@@ -330,37 +330,37 @@
   .np-text p { text-indent: 1em; text-align: justify; }
   .np-text p + p { margin-top: .35em; }
   .np-text p.gap { margin-top: 1.9em; }   /* 원고의 빈 줄 = 장면 전환 */
-  .np-text .msg { text-indent: 0; color: #508AA8; }
+  .np-text .msg { text-indent: 0; color: #0E5047; }
 
   /* 윈도우 95 스크롤바 (크롬·사파리·엣지) */
   .np-text::-webkit-scrollbar { width: 16px; }
   .np-text::-webkit-scrollbar-track {
-    background: repeating-conic-gradient(#9DD1F1 0 25%, #C8E0F4 0 50%) 0 0 / 2px 2px;
+    background: repeating-conic-gradient(#0E5047 0 25%, #22153C 0 50%) 0 0 / 2px 2px;
   }
   .np-text::-webkit-scrollbar-thumb {
     min-height: 24px;
-    background: #9DD1F1;
+    background: #0E5047;
     border: 1px solid;
-    border-color: #C8E0F4 #031927 #031927 #C8E0F4;
-    box-shadow: inset 1px 1px #C8E0F4, inset -1px -1px #508AA8;
+    border-color: #E3D473 #000F08 #000F08 #E3D473;
+    box-shadow: inset 1px 1px #E3D473, inset -1px -1px #22153C;
   }
   .np-text::-webkit-scrollbar-button:single-button {
     display: block;
     height: 16px;
-    background-color: #9DD1F1;
+    background-color: #0E5047;
     background-repeat: no-repeat;
     background-position: center;
     border: 1px solid;
-    border-color: #C8E0F4 #031927 #031927 #C8E0F4;
+    border-color: #E3D473 #000F08 #000F08 #E3D473;
   }
   .np-text::-webkit-scrollbar-button:single-button:vertical:decrement {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='4' shape-rendering='crispEdges'%3E%3Cpath fill='%23031927' d='M3 0h1v1h1v1h1v1h1v1H0V3h1V2h1V1h1z'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='4' shape-rendering='crispEdges'%3E%3Cpath fill='%23E3D473' d='M3 0h1v1h1v1h1v1h1v1H0V3h1V2h1V1h1z'/%3E%3C/svg%3E");
   }
   .np-text::-webkit-scrollbar-button:single-button:vertical:increment {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='4' shape-rendering='crispEdges'%3E%3Cpath fill='%23031927' d='M0 0h7v1H6v1H5v1H4v1H3V3H2V2H1V1H0z'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='4' shape-rendering='crispEdges'%3E%3Cpath fill='%23E3D473' d='M0 0h7v1H6v1H5v1H4v1H3V3H2V2H1V1H0z'/%3E%3C/svg%3E");
   }
   @supports not selector(::-webkit-scrollbar) {
-    .np-text { scrollbar-color: #9DD1F1 #C8E0F4; }
+    .np-text { scrollbar-color: #0E5047 #22153C; }
   }
 
   /* 아래쪽 가로 스크롤바 + 크기 조절 손잡이 (장식) */
@@ -369,15 +369,15 @@
     grid-row: 2;
     display: grid;
     grid-template-columns: 16px 1fr 16px;
-    background: repeating-conic-gradient(#9DD1F1 0 25%, #C8E0F4 0 50%) 0 0 / 2px 2px;
+    background: repeating-conic-gradient(#0E5047 0 25%, #22153C 0 50%) 0 0 / 2px 2px;
   }
   .np-hbar i, .np-grip {
     display: grid;
     place-items: center;
-    background: #9DD1F1;
+    background: #0E5047;
     box-shadow:
-      inset -1px -1px #031927, inset 1px 1px #C8E0F4,
-      inset -2px -2px #508AA8, inset 2px 2px #C8E0F4;
+      inset -1px -1px #000F08, inset 1px 1px #E3D473,
+      inset -2px -2px #22153C, inset 2px 2px #E3D473;
   }
   .np-hbar span i { width: 24px; height: 16px; }  /* 가로 스크롤 손잡이 */
   .np-grip {
@@ -386,10 +386,10 @@
     box-shadow: none;
     background:
       linear-gradient(135deg,
-        transparent 0 45%, #C8E0F4 45% 50%, #508AA8 50% 58%,
-        transparent 58% 66%, #C8E0F4 66% 71%, #508AA8 71% 79%,
-        transparent 79% 87%, #C8E0F4 87% 92%, #508AA8 92%),
-      #9DD1F1;
+        transparent 0 45%, #E3D473 45% 50%, #22153C 50% 58%,
+        transparent 58% 66%, #E3D473 66% 71%, #22153C 71% 79%,
+        transparent 79% 87%, #E3D473 87% 92%, #22153C 92%),
+      #0E5047;
   }
 
   @media (max-width: 520px) {
@@ -424,7 +424,7 @@
   }
   .tag svg { display: block; width: 100%; height: auto; overflow: visible; }
   .tag:hover, .tag:focus-visible { transform: translateY(-3px); }
-  .tag:focus-visible { outline: 2px dotted var(--pale); outline-offset: 4px; }
+  .tag:focus-visible { outline: 2px dotted var(--amethyst); outline-offset: 4px; }
   .tag text { font-family: "Mona10x12", monospace; }
 
   /* ---------- 픽셀 편지 ---------- */
@@ -437,7 +437,7 @@
     display: grid;
     place-items: center;
     padding: 16px;
-    background: rgba(3, 25, 39, .55);
+    background: rgba(34, 21, 60, .6);
     opacity: 0;
     visibility: hidden;
     transition: opacity .18s linear, visibility 0s linear .18s;
@@ -490,10 +490,10 @@
     max-height: 100%;
     overflow-y: auto;
     padding: 28px 30px calc(var(--envH) * .14 + 28px);
-    background: var(--pale);
-    border: 3px solid var(--baby);
+    background: var(--sand);
+    border: 3px solid var(--teal);
     border-bottom: 0;
-    color: var(--navy);
+    color: var(--amethyst);
     font-family: "Mona10x12", monospace;
     font-size: var(--px);
     line-height: 1.6;
@@ -503,12 +503,12 @@
     transform: translateY(101%);
     transition: transform .3s cubic-bezier(.5, 0, .9, .5);
     scrollbar-width: thin;
-    scrollbar-color: #508AA8 transparent;
+    scrollbar-color: #0E5047 transparent;
   }
   .lt-letter:focus { outline: none; }
   .lt-letter p + p { margin-top: .8em; }
   .lt-letter p:last-child:not(:only-child) { text-align: right; }   /* 맺음말(서명)은 오른쪽 */
-  .lt-letter .msg { color: var(--air); }
+  .lt-letter .msg { color: var(--teal); }
   .lt-layer.show .lt-letter {
     transform: translateY(0);
     transition: transform .75s cubic-bezier(.16, .84, .3, 1) .22s;
@@ -524,7 +524,7 @@
     height: 40px;
     padding: 0;
     border: 0;
-    background: rgba(3, 25, 39, .55);
+    background: rgba(34, 21, 60, .6);
     color: var(--ink);
     cursor: pointer;
   }
@@ -545,7 +545,7 @@
     height: 40px;
     padding: 0;
     border: 0;
-    background: rgba(3, 25, 39, .55);
+    background: rgba(34, 21, 60, .6);
     color: var(--ink);
     cursor: pointer;
     opacity: .75;
@@ -592,12 +592,12 @@
     <section class="np" id="np" role="dialog" aria-modal="true" aria-labelledby="npTitle">
       <header class="np-title">
         <svg width="14" height="16" viewBox="0 0 14 16" shape-rendering="crispEdges" aria-hidden="true">
-          <rect x="1" y="1" width="12" height="15" fill="#031927"/>
-          <rect x="2" y="2" width="10" height="13" fill="#C8E0F4"/>
-          <rect x="2" y="0" width="1" height="3" fill="#031927"/><rect x="5" y="0" width="1" height="3" fill="#031927"/>
-          <rect x="8" y="0" width="1" height="3" fill="#031927"/><rect x="11" y="0" width="1" height="3" fill="#031927"/>
-          <rect x="4" y="6" width="6" height="1" fill="#031927"/><rect x="4" y="8" width="6" height="1" fill="#031927"/>
-          <rect x="4" y="10" width="6" height="1" fill="#031927"/><rect x="4" y="12" width="4" height="1" fill="#031927"/>
+          <rect x="1" y="1" width="12" height="15" fill="#000F08"/>
+          <rect x="2" y="2" width="10" height="13" fill="#E3D473"/>
+          <rect x="2" y="0" width="1" height="3" fill="#000F08"/><rect x="5" y="0" width="1" height="3" fill="#000F08"/>
+          <rect x="8" y="0" width="1" height="3" fill="#000F08"/><rect x="11" y="0" width="1" height="3" fill="#000F08"/>
+          <rect x="4" y="6" width="6" height="1" fill="#000F08"/><rect x="4" y="8" width="6" height="1" fill="#000F08"/>
+          <rect x="4" y="10" width="6" height="1" fill="#000F08"/><rect x="4" y="12" width="4" height="1" fill="#000F08"/>
         </svg>
         <h2 id="npTitle">Untitled - Notepad</h2>
         <div class="np-btns">
@@ -887,7 +887,7 @@
         nextAt = now + 400 + Math.random() * 1400;
       }
       ctx.clearRect(0, 0, W, H);
-      ctx.fillStyle = "#C8E0F4";
+      ctx.fillStyle = "#E3D473";
 
       for (var i = stars.length - 1; i >= 0; i--) {
         var s = stars[i];
@@ -961,15 +961,15 @@
     }
 
     var a = new PixelArt();
-    var red  = { ol: "#031927", fill: "#BA1200", hi: "#BA1200", sh: "#BA1200", st: "#C8E0F4" };
-    var crm  = { ol: "#031927", fill: "#C8E0F4", hi: "#C8E0F4", sh: "#9DD1F1", st: "#9DD1F1" };
+    var red  = { ol: "#000F08", fill: "#D72E2E", hi: "#D72E2E", sh: "#D72E2E", st: "#E3D473" };
+    var crm  = { ol: "#000F08", fill: "#E3D473", hi: "#E3D473", sh: "#0E5047", st: "#0E5047" };
 
     strap(a, 22, 10, 88, 12, red, 76);   // 뒤쪽 긴 끈
     strap(a, 19, 2, 52, 11, crm);    // 앞쪽 짧은 끈
     // 앞 끈의 작은 각인
-    a.map(["..x..", ".x.x.", "x...x", ".x.x.", "..x.."], { x: "#508AA8" }, 61, 5);
+    a.map(["..x..", ".x.x.", "x...x", ".x.x.", "..x.."], { x: "#0E5047" }, 61, 5);
 
-    var metal = { "#": "#031927", "h": "#C8E0F4", "m": "#508AA8", "o": "#031927" };
+    var metal = { "#": "#000F08", "h": "#E3D473", "m": "#0E5047", "o": "#000F08" };
     // 고리 (금속 링 + 구멍)
     a.map([
       "..####..",
@@ -995,14 +995,14 @@
 
     var tagSvg =
       '<svg viewBox="0 0 112 24" shape-rendering="crispEdges" aria-hidden="true">' + a.svg() +
-      '<text x="105" y="20" text-anchor="end" font-size="8" fill="#031927">DEIMOS</text>' +
-      '<text x="105" y="19.4" text-anchor="end" font-size="8" fill="#C8E0F4">DEIMOS</text>' +
+      '<text x="105" y="20" text-anchor="end" font-size="8" fill="#000F08">DEIMOS</text>' +
+      '<text x="105" y="19.4" text-anchor="end" font-size="8" fill="#E3D473">DEIMOS</text>' +
       "</svg>";
     document.getElementById("tag").innerHTML = tagSvg;
 
     /* ---------- 봉투 ---------- */
     var P = 16;   // 앞주머니가 시작되는 줄
-    var G = { back: "#508AA8", inner: "#031927", edge: "#031927", front: "#9DD1F1", lip: "#C8E0F4" };
+    var G = { back: "#22153C", inner: "#000F08", edge: "#000F08", front: "#0E5047", lip: "#E3D473" };
 
     var b = new PixelArt();
     b.dot(G.edge, 1, 0, 78, 1);
