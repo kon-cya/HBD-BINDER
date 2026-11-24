@@ -398,6 +398,133 @@
     .bubble::after { right: 10px; bottom: -18px; width: 30px; height: 22px; }
   }
 
+  /* ---------- DEIMOS 네임텍 (픽셀) ---------- */
+  .tag-wrap {
+    display: flex;
+    justify-content: center;
+    margin: 3.2em 0 .5em;
+  }
+  .tag {
+    display: block;
+    width: 384px;
+    max-width: 100%;
+    padding: 6px 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    transition: transform .15s steps(2);
+  }
+  .tag svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .tag:hover, .tag:focus-visible { transform: translateY(-3px); }
+  .tag:focus-visible { outline: 2px dotted #2f4b37; outline-offset: 4px; }
+  .tag text { font-family: "Mona10x12", monospace; }
+
+  /* ---------- 픽셀 편지 ---------- */
+  .lt-layer {
+    --w: min(420px, 88vw);
+    --envH: calc(var(--w) * .55);
+    --stageH: min(84vh, calc(var(--envH) + 460px));
+    position: fixed;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 16px;
+    background: rgba(0, 0, 0, .45);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .18s linear, visibility 0s linear .18s;
+  }
+  .lt-layer.open {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity .18s linear;
+  }
+  .lt-stage {
+    position: relative;
+    width: var(--w);
+    height: var(--stageH);
+    transform: translateY(36px);
+    transition: transform .22s cubic-bezier(.2, .9, .3, 1);
+  }
+  .lt-layer.open .lt-stage { transform: translateY(0); }
+
+  .lt-env {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: var(--envH);
+  }
+  .lt-back, .lt-front {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .lt-front { pointer-events: none; }
+
+  /* 편지가 봉투 속에서 위로 빠져나오는 칸 */
+  .lt-slot {
+    position: absolute;
+    left: 12.5%;
+    right: 12.5%;
+    top: calc(var(--envH) - var(--stageH));
+    bottom: 50%;
+    overflow: hidden;
+  }
+  .lt-letter {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    min-height: calc(var(--envH) * .95);
+    max-height: 100%;
+    overflow-y: auto;
+    padding: 22px 20px calc(var(--envH) * .14 + 22px);
+    background: #f7f6e1;
+    border: 3px solid #c9c49a;
+    border-bottom: 0;
+    box-shadow: inset 0 3px 0 #fffff4;
+    color: #2f4b37;
+    font-family: "Mona10x12", monospace;
+    font-size: var(--px);
+    line-height: 1.6;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    -webkit-font-smoothing: none;
+    transform: translateY(101%);
+    transition: transform .3s cubic-bezier(.5, 0, .9, .5);
+    scrollbar-width: thin;
+    scrollbar-color: #9dc6a7 transparent;
+  }
+  .lt-letter:focus { outline: none; }
+  .lt-letter p + p { margin-top: .6em; }
+  .lt-letter .msg { color: #8aa892; }
+  .lt-layer.show .lt-letter {
+    transform: translateY(0);
+    transition: transform .75s cubic-bezier(.16, .84, .3, 1) .22s;
+  }
+
+  .lt-close {
+    position: fixed;
+    top: 14px;
+    right: 14px;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 0;
+    background: rgba(0, 0, 0, .35);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .lt-close:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+  @media (max-width: 520px) {
+    .lt-letter { padding-left: 14px; padding-right: 14px; }
+  }
+
   /* ---------- 소리 켜기/끄기 ---------- */
   .sound {
     position: fixed;
@@ -426,6 +553,8 @@
     .spinner { animation-duration: 2s; }
     .bubble, .bubble.show, .bubble.show:hover { transform: none; transition: opacity .2s; }
     .np, .np-layer.open .np { transform: none; transition: none; }
+    .lt-stage, .lt-layer.open .lt-stage { transform: none; transition: none; }
+    .lt-letter, .lt-layer.show .lt-letter { transition: transform .2s linear; }
   }
 </style>
 </head>
@@ -481,7 +610,10 @@
 
       <div class="np-edit">
         <article class="np-text" id="npText" tabindex="0" aria-label="본문">
-          <p class="msg">불러오는 중…</p>
+          <div id="npStory"><p class="msg">불러오는 중…</p></div>
+          <div class="tag-wrap">
+            <button type="button" class="tag" id="tag" aria-label="DEIMOS 네임텍, 편지 열기" aria-haspopup="dialog"></button>
+          </div>
         </article>
         <div class="np-hbar" aria-hidden="true">
           <i><svg width="4" height="7" shape-rendering="crispEdges"><path d="M3 0h1v7H3V6H2V5H1V4H0V3h1V2h1V1h1z"/></svg></i>
@@ -503,6 +635,25 @@
       <path d="M12 5h2v2h-2zM14 7h2v2h-2zM16 9h2v2h-2zM16 5h2v2h-2zM12 9h2v2h-2z"/>
     </svg>
   </button>
+
+  <div class="lt-layer" id="ltLayer">
+    <div class="lt-stage" role="dialog" aria-modal="true" aria-label="DEIMOS의 편지">
+      <div class="lt-env">
+        <svg class="lt-back" id="ltBack" viewBox="0 0 80 44" preserveAspectRatio="none" shape-rendering="crispEdges" aria-hidden="true"></svg>
+        <div class="lt-slot">
+          <div class="lt-letter" id="ltLetter" tabindex="0">
+            <div id="ltBody"><p class="msg">불러오는 중…</p></div>
+          </div>
+        </div>
+        <svg class="lt-front" id="ltFront" viewBox="0 0 80 44" preserveAspectRatio="none" shape-rendering="crispEdges" aria-hidden="true"></svg>
+      </div>
+    </div>
+    <button type="button" class="lt-close" id="ltClose" aria-label="편지 닫기">
+      <svg width="14" height="14" viewBox="0 0 7 7" shape-rendering="crispEdges" fill="currentColor" aria-hidden="true">
+        <path d="M0 0h1v1h1v1h1v1h1V2h1V1h1V0h1v1H6v1H5v1H4v1h1v1h1v1h1v1H6V6H5V5H4V4H3v1H2v1H1v1H0V6h1V5h1V4h1V3H2V2H1V1H0z"/>
+      </svg>
+    </button>
+  </div>
 
 <script>
   (function () {
@@ -536,6 +687,7 @@
     var layer = document.getElementById("npLayer");
     var np = document.getElementById("np");
     var text = document.getElementById("npText");
+    var story = document.getElementById("npStory");
 
     // story.txt: 줄바꿈 = 새 문단, 빈 줄 = 장면 전환(간격)
     fetch("story.txt", { cache: "no-cache" })
@@ -552,11 +704,11 @@
           gap = false;
           frag.appendChild(p);
         });
-        text.textContent = "";
-        text.appendChild(frag);
+        story.textContent = "";
+        story.appendChild(frag);
       })
       .catch(function () {
-        text.innerHTML = '<p class="msg">글을 불러오지 못했어요. 새로고침해 주세요.</p>';
+        story.innerHTML = '<p class="msg">글을 불러오지 못했어요. 새로고침해 주세요.</p>';
       });
 
     function openNote() {
@@ -639,7 +791,9 @@
     showSound();
     playBgm();
     document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape" && layer.classList.contains("open")) closeNote();
+      if (e.key !== "Escape") return;
+      if (document.getElementById("ltLayer").classList.contains("open")) return;   // 편지 쪽에서 처리
+      if (layer.classList.contains("open")) closeNote();
     });
 
     function start() {
@@ -755,6 +909,171 @@
       requestAnimationFrame(frame);
     }
     requestAnimationFrame(frame);
+  })();
+</script>
+<script>
+  /* ---------- 픽셀 그림 도우미: 색깔별로 1칸짜리 사각형을 모아 path로 ---------- */
+  function PixelArt() { this.c = {}; }
+  PixelArt.prototype.dot = function (col, x, y, w, h) {
+    w = w || 1; h = h || 1;
+    this.c[col] = (this.c[col] || "") + "M" + x + " " + y + "h" + w + "v" + h + "h" + (-w) + "z";
+  };
+  PixelArt.prototype.map = function (rows, palette, ox, oy) {
+    for (var y = 0; y < rows.length; y++)
+      for (var x = 0; x < rows[y].length; x++) {
+        var col = palette[rows[y][x]];
+        if (col) this.dot(col, ox + x, oy + y);
+      }
+  };
+  PixelArt.prototype.svg = function () {
+    var out = "";
+    for (var k in this.c) out += '<path fill="' + k + '" d="' + this.c[k] + '"/>';
+    return out;
+  };
+
+  (function () {
+    /* ---------- 네임텍 ---------- */
+    function strap(a, x, y, w, h, c) {
+      // 테두리 (모서리 한 칸씩 깎아서 둥글게)
+      a.dot(c.ol, x + 1, y, w - 2, 1);
+      a.dot(c.ol, x + 1, y + h - 1, w - 2, 1);
+      a.dot(c.ol, x, y + 1, 1, h - 2);
+      a.dot(c.ol, x + w - 1, y + 1, 1, h - 2);
+      a.dot(c.fill, x + 1, y + 1, w - 2, h - 2);
+      a.dot(c.hi, x + 1, y + 1, w - 2, 1);
+      a.dot(c.sh, x + 1, y + h - 2, w - 2, 1);
+      // 박음질
+      for (var sx = x + 9; sx < x + w - 3; sx += 3) {
+        a.dot(c.st, sx, y + 2, 2, 1);
+        a.dot(c.st, sx, y + h - 3, 2, 1);
+      }
+      a.dot(c.st, x + w - 3, y + 3, 1, h - 6);
+    }
+
+    var a = new PixelArt();
+    var red  = { ol: "#3b1512", fill: "#a1463b", hi: "#bd6152", sh: "#7a3129", st: "#c47465" };
+    var crm  = { ol: "#5f5745", fill: "#ebe4cf", hi: "#fbf7ea", sh: "#cfc5aa", st: "#d6ccb2" };
+
+    strap(a, 22, 10, 88, 12, red);   // 뒤쪽 긴 끈
+    strap(a, 19, 2, 52, 11, crm);    // 앞쪽 짧은 끈
+    // 앞 끈의 작은 각인
+    a.map(["..x..", ".x.x.", "x...x", ".x.x.", "..x.."], { x: "#cdc2a4" }, 61, 5);
+
+    var metal = { "#": "#3c4147", "h": "#d9dde2", "m": "#9aa1a9", "o": "#24282c" };
+    // 고리 (금속 링 + 구멍)
+    a.map([
+      "..####..",
+      ".#hhmm#.",
+      "#hoooom#",
+      "#hoooom#",
+      "#hoooom#",
+      "#mooomm#",
+      ".#mmmm#.",
+      "..####.."
+    ], metal, 18, 3);
+    // 카라비너
+    a.map([
+      "....###########...",
+      "..##hhhhhhhhhhh##.",
+      ".#hh###########hm#",
+      "#h#............#m#",
+      "#h#............#m#",
+      ".#mm###########mm#",
+      "..##mmmmmmmmmmm##.",
+      "....###########..."
+    ], metal, 1, 3);
+
+    var tagSvg =
+      '<svg viewBox="0 0 112 24" shape-rendering="crispEdges" aria-hidden="true">' + a.svg() +
+      '<text x="105" y="20" text-anchor="end" font-size="8" fill="#3b1512">DEIMOS</text>' +
+      '<text x="105" y="19.4" text-anchor="end" font-size="8" fill="#f0cc72">DEIMOS</text>' +
+      "</svg>";
+    document.getElementById("tag").innerHTML = tagSvg;
+
+    /* ---------- 봉투 ---------- */
+    var P = 16;   // 앞주머니가 시작되는 줄
+    var G = { back: "#86b792", inner: "#6f9f7b", edge: "#5d8a69", front: "#93c49f", lip: "#b2d8bb", line: "#2e4a36" };
+
+    var b = new PixelArt();
+    b.dot(G.edge, 1, 0, 78, 1);
+    b.dot(G.edge, 0, 1, 1, 42);
+    b.dot(G.edge, 79, 1, 1, 42);
+    b.dot(G.back, 1, 1, 78, 42);
+    b.dot(G.inner, 3, 2, 74, P - 2);     // 봉투 안쪽 그늘
+    document.getElementById("ltBack").innerHTML = b.svg();
+
+    var f = new PixelArt();
+    f.dot(G.front, 1, P, 78, 43 - P);
+    f.dot(G.lip, 1, P, 78, 1);
+    f.dot(G.edge, 0, P, 1, 43 - P);
+    f.dot(G.edge, 79, P, 1, 43 - P);
+    f.dot(G.edge, 1, 43, 78, 1);
+    for (var i = 0; i < 42 - P - 1; i++) {
+      if (i % 3 === 2) continue;           // 점선
+      f.dot(G.line, 2 + i, 41 - i);
+      f.dot(G.line, 77 - i, 41 - i);
+    }
+    document.getElementById("ltFront").innerHTML = f.svg();
+
+    /* ---------- 편지 내용 ---------- */
+    var body = document.getElementById("ltBody");
+    fetch("letter-deimos.txt", { cache: "no-cache" })
+      .then(function (r) { if (!r.ok) throw r; return r.text(); })
+      .then(function (raw) {
+        body.textContent = "";
+        raw.replace(/\r/g, "").split("\n").forEach(function (line) {
+          line = line.trim();
+          if (!line) return;
+          var p = document.createElement("p");
+          p.textContent = line;
+          body.appendChild(p);
+        });
+      })
+      .catch(function () { body.innerHTML = '<p class="msg">편지를 불러오지 못했어요.</p>'; });
+
+    /* ---------- 열고 닫기 ---------- */
+    var lt = document.getElementById("ltLayer");
+    var letter = document.getElementById("ltLetter");
+    var tag = document.getElementById("tag");
+    var timer;
+
+    // 편지 길이에 맞춰 무대 높이를 정해서 봉투+편지가 화면 가운데 오도록
+    function fitStage() {
+      var envH = document.querySelector(".lt-env").getBoundingClientRect().height;
+      letter.style.maxHeight = "none";
+      var h = letter.offsetHeight;
+      letter.style.maxHeight = "";
+      var stageH = Math.min(innerHeight * 0.86, h + envH * 0.5 + 4);
+      lt.style.setProperty("--stageH", Math.round(stageH) + "px");
+    }
+
+    function openLetter() {
+      clearTimeout(timer);
+      fitStage();
+      letter.scrollTop = 0;
+      lt.classList.add("open");
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () { lt.classList.add("show"); });
+      });
+      setTimeout(function () { letter.focus({ preventScroll: true }); }, 60);
+    }
+    function closeLetter() {
+      if (!lt.classList.contains("open")) return;
+      lt.classList.remove("show");                 // 편지가 먼저 봉투로 쏙
+      timer = setTimeout(function () {
+        lt.classList.remove("open");
+        tag.focus({ preventScroll: true });
+      }, 300);
+    }
+
+    tag.addEventListener("click", openLetter);
+    document.getElementById("ltClose").addEventListener("click", closeLetter);
+    lt.addEventListener("click", function (e) {
+      if (!e.target.closest(".lt-letter") && !e.target.closest(".lt-close")) closeLetter();
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && lt.classList.contains("open")) closeLetter();
+    });
   })();
 </script>
 </body>

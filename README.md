@@ -13,3 +13,6 @@
 
 ## 배경 음악
 `audio/happy-birthday-8bit.mp3` — 음량은 index.html의 `VOLUME` 값(0~1)으로 조절.
+
+## 편지 고치기
+DEIMOS 네임텍을 누르면 나오는 편지는 `letter-deimos.txt`에 있어요. 줄바꿈 한 번 = 새 문단.
