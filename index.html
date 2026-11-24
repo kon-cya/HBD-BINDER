@@ -421,8 +421,8 @@
 
   /* ---------- 픽셀 편지 ---------- */
   .lt-layer {
-    --w: min(420px, 88vw);
-    --envH: calc(var(--w) * .55);
+    --w: min(560px, 94vw);
+    --envH: calc(var(--w) * .46);
     --stageH: min(84vh, calc(var(--envH) + 460px));
     position: fixed;
     inset: 0;
@@ -434,6 +434,7 @@
     visibility: hidden;
     transition: opacity .18s linear, visibility 0s linear .18s;
   }
+  .lt-layer { padding-top: 64px; }
   .lt-layer.open {
     opacity: 1;
     visibility: visible;
@@ -466,8 +467,8 @@
   /* 편지가 봉투 속에서 위로 빠져나오는 칸 */
   .lt-slot {
     position: absolute;
-    left: 12.5%;
-    right: 12.5%;
+    left: 9%;
+    right: 9%;
     top: calc(var(--envH) - var(--stageH));
     bottom: 50%;
     overflow: hidden;
@@ -480,7 +481,7 @@
     min-height: calc(var(--envH) * .95);
     max-height: 100%;
     overflow-y: auto;
-    padding: 22px 20px calc(var(--envH) * .14 + 22px);
+    padding: 28px 30px calc(var(--envH) * .14 + 28px);
     background: #f7f6e1;
     border: 3px solid #c9c49a;
     border-bottom: 0;
@@ -498,7 +499,8 @@
     scrollbar-color: #9dc6a7 transparent;
   }
   .lt-letter:focus { outline: none; }
-  .lt-letter p + p { margin-top: .6em; }
+  .lt-letter p + p { margin-top: .8em; }
+  .lt-letter p:last-child:not(:only-child) { text-align: right; }   /* 맺음말(서명)은 오른쪽 */
   .lt-letter .msg { color: #8aa892; }
   .lt-layer.show .lt-letter {
     transform: translateY(0);
@@ -522,7 +524,7 @@
   .lt-close:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 
   @media (max-width: 520px) {
-    .lt-letter { padding-left: 14px; padding-right: 14px; }
+    .lt-letter { padding-left: 16px; padding-right: 16px; }
   }
 
   /* ---------- 소리 켜기/끄기 ---------- */
@@ -1038,7 +1040,7 @@
       letter.style.maxHeight = "none";
       var h = letter.offsetHeight;
       letter.style.maxHeight = "";
-      var stageH = Math.min(innerHeight * 0.86, h + envH * 0.5 + 4);
+      var stageH = Math.min(innerHeight - 84, h + envH * 0.5 + 4);   // 위쪽 닫기 버튼 자리 남김
       lt.style.setProperty("--stageH", Math.round(stageH) + "px");
     }
 
