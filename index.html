@@ -25,10 +25,7 @@
   html, body { height: 100%; }
 
   body {
-    background:
-      linear-gradient(rgba(0,0,0,.22), rgba(0,0,0,.22)),
-      var(--bg) url("images/bg-small.png") center / cover no-repeat;
-    image-rendering: pixelated;
+    background: #000;
     color: var(--ink);
     font-family: "Mona10x12", monospace;
     font-size: var(--px);
@@ -36,6 +33,25 @@
     -webkit-font-smoothing: none;
     font-smooth: never;
     overflow: hidden;
+  }
+
+  /* ---------- 배경: 사진 전체를 보이게 + 가장자리는 검게 ---------- */
+  .bg {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    aspect-ratio: 248 / 139;
+    width: min(115vw, 205vh);              /* 가로 화면: 사진 거의 전체 */
+    background: url("images/bg-small.png") center / 100% 100% no-repeat;
+    image-rendering: pixelated;
+    filter: brightness(.78);
+    -webkit-mask-image: radial-gradient(closest-side, #000 70%, transparent 100%);
+            mask-image: radial-gradient(closest-side, #000 70%, transparent 100%);
+    pointer-events: none;
+  }
+  @media (orientation: portrait) {
+    .bg { width: 200vw; }                   /* 세로 화면: 가운데 절반 정도 */
   }
 
   .screen {
@@ -146,6 +162,8 @@
 </style>
 </head>
 <body>
+
+  <div class="bg" aria-hidden="true"></div>
 
   <div class="screen" aria-live="polite">
     <div class="loader" id="loader" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="로딩 중">
