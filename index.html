@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HBD BINDER</title>
+<link rel="preload" href="fonts/Mona10x12.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+  @font-face {
+    font-family: "Mona10x12";
+    src: url("fonts/Mona10x12.woff2") format("woff2");
+    font-display: block;
+  }
+
+  :root {
+    --bg: #ffffff;
+    --ink: #111111;
+    --blue: #079fe6;
+    --track: #e6e6e6;
+    --px: 24px;            /* 폰트 1칸 = 12px의 배수일 때 가장 선명함 */
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body { height: 100%; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Mona10x12", monospace;
+    font-size: var(--px);
+    line-height: 1.5;
+    -webkit-font-smoothing: none;
+    font-smooth: never;
+    overflow: hidden;
+  }
+
+  .screen {
+    position: fixed;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 16px;
+  }
+
+  /* ---------- 로딩 ---------- */
+  .loader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    transition: opacity .25s steps(3);
+  }
+  .loader.done { opacity: 0; }
+
+  /* 8칸 픽셀 스피너 */
+  .spinner {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    animation: spin .8s steps(8) infinite;
+  }
+  .spinner i {
+    position: absolute;
+    left: 21px;
+    top: 0;
+    width: 6px;
+    height: 12px;
+    background: var(--ink);
+    transform-origin: 3px 24px;
+  }
+  .spinner i:nth-child(1) { transform: rotate(0deg);   opacity: 1; }
+  .spinner i:nth-child(2) { transform: rotate(45deg);  opacity: .85; }
+  .spinner i:nth-child(3) { transform: rotate(90deg);  opacity: .7; }
+  .spinner i:nth-child(4) { transform: rotate(135deg); opacity: .55; }
+  .spinner i:nth-child(5) { transform: rotate(180deg); opacity: .4; }
+  .spinner i:nth-child(6) { transform: rotate(225deg); opacity: .3; }
+  .spinner i:nth-child(7) { transform: rotate(270deg); opacity: .2; }
+  .spinner i:nth-child(8) { transform: rotate(315deg); opacity: .12; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .bar {
+    display: grid;
+    grid-template-columns: repeat(20, 10px);
+    gap: 2px;
+  }
+  .bar span {
+    height: 12px;
+    background: var(--track);
+  }
+  .bar span.on { background: var(--blue); }
+
+  .label {
+    display: flex;
+    gap: 12px;
+    letter-spacing: 0;
+  }
+  .pct { min-width: 4ch; text-align: right; }
+
+  /* ---------- 말풍선 ---------- */
+  .bubble {
+    position: relative;
+    max-width: 100%;
+    padding: 12px 30px 14px;
+    background: var(--blue);
+    color: #fff;
+    text-align: right;
+    border-radius: 34px / 22px;
+    opacity: 0;
+    transform: scale(.6);
+    pointer-events: none;
+  }
+  .bubble p { white-space: nowrap; }
+
+  /* 오른쪽 아래 꼬리 */
+  .bubble::after {
+    content: "";
+    position: absolute;
+    right: 14px;
+    bottom: -24px;
+    width: 40px;
+    height: 30px;
+    background: var(--blue);
+    clip-path: polygon(0 0, 100% 0, 100% 100%);
+  }
+
+  .bubble.show {
+    opacity: 1;
+    transform: scale(1);
+    transition: transform .28s steps(4), opacity .1s steps(1);
+  }
+
+  @media (max-width: 420px) {
+    :root { --px: 18px; }
+    .bubble { padding: 10px 22px 12px; border-radius: 28px / 18px; }
+    .bubble::after { right: 10px; bottom: -18px; width: 30px; height: 22px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .spinner { animation-duration: 2s; }
+    .bubble, .bubble.show { transform: none; transition: opacity .2s; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="screen" aria-live="polite">
+    <div class="loader" id="loader" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="로딩 중">
+      <div class="spinner" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="bar" id="bar" aria-hidden="true"></div>
+      <div class="label"><span>LOADING</span><span class="pct" id="pct">0%</span></div>
+    </div>
+  </div>
+
+  <div class="screen">
+    <div class="bubble" id="bubble" aria-hidden="true">
+      <p>걱정 마, 린쉬한</p>
+      <p>나 안 죽어. 죽지 말라고 했으니까!</p>
+    </div>
+  </div>
+
+<script>
+  (function () {
+    var loader = document.getElementById("loader");
+    var bar = document.getElementById("bar");
+    var pct = document.getElementById("pct");
+    var bubble = document.getElementById("bubble");
+    var CELLS = 20;
+
+    for (var i = 0; i < CELLS; i++) bar.appendChild(document.createElement("span"));
+    var cells = bar.children;
+
+    function render(v) {
+      pct.textContent = v + "%";
+      loader.setAttribute("aria-valuenow", v);
+      var lit = Math.round(v / 100 * CELLS);
+      for (var i = 0; i < CELLS; i++) cells[i].classList.toggle("on", i < lit);
+    }
+
+    function finish() {
+      loader.classList.add("done");
+      setTimeout(function () {
+        loader.parentNode.style.display = "none";
+        bubble.removeAttribute("aria-hidden");
+        bubble.classList.add("show");
+      }, 450);
+    }
+
+    function start() {
+      var v = 0;
+      (function tick() {
+        // 불규칙하게 차오르다가 끝에서 잠깐 멈칫
+        v = Math.min(100, v + 1 + Math.floor(Math.random() * 7));
+        render(v);
+        if (v >= 100) { setTimeout(finish, 350); return; }
+        var wait = v > 85 ? 140 : 40 + Math.random() * 90;
+        setTimeout(tick, wait);
+      })();
+    }
+
+    // 폰트가 준비된 뒤 시작 (최대 1.5초 대기)
+    var started = false;
+    function go() { if (!started) { started = true; start(); } }
+    if (document.fonts && document.fonts.load) {
+      document.fonts.load('24px "Mona10x12"').then(go, go);
+      setTimeout(go, 1500);
+    } else {
+      go();
+    }
+  })();
+</script>
+</body>
+</html>
